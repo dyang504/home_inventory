@@ -19,6 +19,12 @@ class CRUDUser(CRUDBase[User, UserCreate, None]):
     def get_all_user(self, db: Session) -> List[User]:
         return db.query(self.model).all()
 
+    def get_user(self, username: str, db: Session) -> User:
+        
+        db_user = db.query(self.model).filter(self.model.username == username)
+        if db_user:
+            return db_user
+
     # def update(self, db: Session, *, db_obj: User,
     #            obj_in: Union[UserUpdate, Dict[str, Any]]):
     #     if isinstance(obj_in, dict):

@@ -1,0 +1,8 @@
+[run]
+
+omit=
+    */env/*
+    */.vscode/*
+    */.pytest_cache/*
+    */test/*
+    */__init__.py

@@ -13,5 +13,13 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
             self.model).join(Item).filter(Item.user_id == user_id).all()
         return db_obj
 
+    def create_category_with_owner(self, db: Session, obj_in: CategoryCreate,
+                                   user_id: int) -> Category:
+        new_obj = Category(name=obj_in.name, user_id=user_id)
+        db.add(new_obj)
+        db.commit()
+        db.refresh(new_obj)
+        return new_obj
+
 
 category = CRUDCategory(Category)

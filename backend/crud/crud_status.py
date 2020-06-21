@@ -9,7 +9,13 @@ from backend.schema.status_schema import StatusCreate, StatusUpdate
 
 
 class CRUDStatus(CRUDBase[Status, StatusCreate, StatusUpdate]):
-    pass
+    def create_status_with_owner(self, db: Session, obj_in: StatusCreate,
+                                 user_id: str) -> Status:
+        status = Status(name=obj_in.name, user_id=user_id)
+        db.add(status)
+        db.commit()
+        db.refresh(status)
+        return status
 
 
 status = CRUDStatus(Status)

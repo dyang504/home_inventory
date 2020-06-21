@@ -12,7 +12,20 @@ from backend.schema.inventory_location_schema import (InventoryLocationCreate,
 class CRUDInventoryLocation(CRUDBase[Inventory_location,
                                      InventoryLocationCreate,
                                      InventoryLocationUpdate]):
-    pass
+    def get_inventory_location_by_user(self, db: Session, user_id: int):
+        locations = db.query(
+            self.model).filter(self.model.user_id == user_id).all()
+        return locations
+
+    def create_inventory_location_by_user(self, db: Session,
+                                          obj_in: InventoryLocationUpdate,
+                                          user_id: int):
+        obj_in_data = jsonable_encoder(obj_in)
+        new_location = Inventory_location(**obj_in_data, user_id=user_id)
+        db.add(new_location)
+        db.commit()
+        db.refresh(new_location)
+        return new_location
 
 
 inventory_location = CRUDInventoryLocation(Inventory_location)

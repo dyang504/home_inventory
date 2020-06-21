@@ -2,7 +2,8 @@ serve:
 	uvicorn backend.main:app --reload
 
 test:
-	pytest -v
+	coverage run -m pytest -v
+	coverage html
 
 freeze:
 	pip freeze > requirements.txt

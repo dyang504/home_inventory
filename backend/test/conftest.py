@@ -7,6 +7,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from backend.db.database import Base, get_db
+from backend.db import models
+from backend.crud import crud_user
 from backend.main import app
 
 SQL_DB_URL = "sqlite:///./test.db"
@@ -45,3 +47,32 @@ def client(test_app, db_session):
     test_app.dependency_overrides[get_db] = _get_test_db
     with TestClient(test_app) as client:
         yield client
+
+
+def authenticate_user(*,
+                      client: TestClient,
+                      username: str,
+                      password: str,
+                      db_session=db_session):
+    data = {
+        "username": username,
+        "password": password,
+        "email": "test@test.com"
+    }
+    test_user = client.post('/user/create', json=data)
+
+    r = client.post("/token", data=data)
+    r_json = r.json()
+
+    token = r_json["access_token"]
+    header = {"Authorization": f"Bearer {token}"}
+    return header
+
+
+@pytest.fixture
+def normal_user_token(client: TestClient, db_session: Session):
+    username = "test"
+    password = "test"
+    return authenticate_user(client=client,
+                             username=username,
+                             password=password)

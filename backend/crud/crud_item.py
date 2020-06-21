@@ -12,7 +12,6 @@ class CRUDItem(CRUDBase[Item, ItemCreate, None]):
     def get_all_items(self, db: Session, user_id: int) -> List[Item]:
         db_obj = db.query(self.model).options(
             joinedload('infos')).filter(Item.user_id == user_id).all()
-        print(db_obj[0].infos)
         return db_obj
 
     def create_with_owner(self, db: Session, *, obj_in: ItemCreate,

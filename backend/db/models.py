@@ -4,7 +4,7 @@ from typing import List
 from datetime import datetime
 from passlib.hash import pbkdf2_sha256
 from sqlalchemy import (Column, ForeignKey, Integer, Float, String, Text,
-                        DateTime, Table)
+                        DateTime, Table, Boolean)
 from sqlalchemy.orm import relationship
 
 from backend.db.database import Base, engine
@@ -34,6 +34,8 @@ class User(Base, TimestampMixin):
     password: str = Column(String)
     email: str = Column(String)
     last_login: str = Column(DateTime)
+    isSuperUser: bool = Column(Boolean)
+    isActive: bool = Column(Boolean)
 
     icon: User_icon = relationship("User_icon", uselist=False, backref='user')
 
@@ -49,7 +51,7 @@ class User(Base, TimestampMixin):
         self.password = pbkdf2_sha256.hash(password)
 
     def check_password(self, value):
-        return pbkdf2_sha256.verify(self.password, value)
+        return pbkdf2_sha256.verify(value, self.password)
 
     def __repr__(self):
         return f"<User(username={ self.username })>"
@@ -107,6 +109,8 @@ class Category(Base):
     id: int = Column(Integer, primary_key=True)
     name: str = Column(String)
 
+    user_id = Column(Integer, ForeignKey("user.id"))
+
 
 class Size(Base):
     __tablename__ = "size"
@@ -162,6 +166,8 @@ class Status(Base):
     id: int = Column(Integer, primary_key=True)
     name: str = Column(String)
 
+    user_id = Column(Integer, ForeignKey("user.id"))
+
     item_info = relationship('Item_info', backref='status', uselist=False)
 
 
@@ -172,6 +178,8 @@ class Inventory_location(Base):
     name: str = Column(String)
     description: str = Column(Text)
     image_url: str = Column(String)
+
+    user_id = Column(Integer, ForeignKey("user.id"))
 
     item_info = relationship('Item_info',
                              backref='inventory_location',
