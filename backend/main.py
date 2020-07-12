@@ -1,7 +1,11 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from backend.api import (users, item_info, item, category, status,
-                         inventory_location)
+from backend.api.status import status
+from backend.api.users import users
+from backend.api.item import item
+from backend.api.category import category
+from backend.api.inventory_location import inventory_location
+from backend.api.item_info import item_info
 
 app = FastAPI()
 
